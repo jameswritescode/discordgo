@@ -1,6 +1,6 @@
-module github.com/bwmarrin/discordgo
+module github.com/jameswritescode/discordgo
 
-go 1.13
+go 1.17
 
 require (
 	github.com/gorilla/websocket v1.4.2
