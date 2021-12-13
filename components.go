@@ -174,7 +174,7 @@ type SelectMenu struct {
 	MinValues int `json:"min_values,omitempty"`
 	// This value determines the maximal amount of selected items in the menu.
 	// If MaxValues or MinValues are greater than one then the user can select multiple items in the component.
-	MaxValues int                `json:"max_values,omitempty"`
+	MaxValues int                `json:"max_values"`
 	Options   []SelectMenuOption `json:"options"`
 }
 
