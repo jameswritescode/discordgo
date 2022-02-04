@@ -38,7 +38,8 @@ type ApplicationCommand struct {
 	Description string `json:"description,omitempty"`
 	Version     string `json:"version,omitempty"`
 	// NOTE: Chat commands only. Otherwise it mustn't be set.
-	Options []*ApplicationCommandOption `json:"options"`
+	Options           []*ApplicationCommandOption `json:"options"`
+	DefaultPermission *bool                       `json:"default_permission,omitempty"`
 }
 
 // ApplicationCommandOptionType indicates the type of a slash command's option.
@@ -113,6 +114,7 @@ const (
 	InteractionApplicationCommand             InteractionType = 2
 	InteractionMessageComponent               InteractionType = 3
 	InteractionApplicationCommandAutocomplete InteractionType = 4
+	InteractionModalSubmit                    InteractionType = 5
 )
 
 func (t InteractionType) String() string {
@@ -404,6 +406,7 @@ const (
 	InteractionResponseUpdateMessage InteractionResponseType = 7
 	// InteractionApplicationCommandAutocompleteResult shows autocompletion results. Autocomplete interaction only.
 	InteractionApplicationCommandAutocompleteResult InteractionResponseType = 8
+	InteractionResponseModal                        InteractionResponseType = 9
 )
 
 // InteractionResponse represents a response for an interaction event.
@@ -424,6 +427,10 @@ type InteractionResponseData struct {
 
 	// NOTE: autocomplete interaction only.
 	Choices []*ApplicationCommandOptionChoice `json:"choices,omitempty"`
+
+	// NOTE: modal interaction only.
+	CustomID string `json:"custom_id,omitempty"`
+	Title    string `json:"title,omitempty"`
 }
 
 // VerifyInteraction implements message verification of the discord interactions api

@@ -13,6 +13,7 @@ const (
 	ActionsRowComponent ComponentType = 1
 	ButtonComponent     ComponentType = 2
 	SelectMenuComponent ComponentType = 3
+	TextInputComponent  ComponentType = 4
 )
 
 // MessageComponent is a base interface for all message components.
@@ -42,6 +43,8 @@ func (umc *unmarshalableMessageComponent) UnmarshalJSON(src []byte) error {
 		umc.MessageComponent = &Button{}
 	case SelectMenuComponent:
 		umc.MessageComponent = &SelectMenu{}
+	case TextInputComponent:
+		umc.MessageComponent = &TextInput{}
 	default:
 		return fmt.Errorf("unknown component type: %d", v.Type)
 	}
@@ -193,5 +196,39 @@ func (m SelectMenu) MarshalJSON() ([]byte, error) {
 	}{
 		selectMenu: selectMenu(m),
 		Type:       m.Type(),
+	})
+}
+
+type TextInputStyle uint
+
+const (
+	ShortTextInput     TextInputStyle = 1
+	ParagraphTextInput TextInputStyle = 2
+)
+
+type TextInput struct {
+	CustomID    string         `json:"custom_id"`
+	Style       TextInputStyle `json:"style"`
+	Label       string         `json:"label"`
+	MinLength   int            `json:"min_length"`
+	MaxLength   int            `json:"max_length"`
+	Required    bool           `json:"required"`
+	Value       string         `json:"value"`
+	Placeholder string         `json:"placeholder"`
+}
+
+func (t TextInput) Type() ComponentType {
+	return TextInputComponent
+}
+
+func (t TextInput) MarshalJSON() ([]byte, error) {
+	type textInput TextInput
+
+	return json.Marshal(struct {
+		textInput
+		Type ComponentType `json:"type"`
+	}{
+		textInput: textInput(t),
+		Type:      t.Type(),
 	})
 }
