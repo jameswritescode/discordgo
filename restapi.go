@@ -20,7 +20,6 @@ import (
 	_ "image/png"  // For PNG decoding
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -69,10 +68,8 @@ func (s *Session) request(method, urlStr, contentType string, b []byte, bucketID
 
 // RequestWithLockedBucket makes a request using a bucket that's already been locked
 func (s *Session) RequestWithLockedBucket(method, urlStr, contentType string, b []byte, bucket *Bucket, sequence int) (response []byte, err error) {
-	if s.Debug {
-		log.Printf("API REQUEST %8s :: %s\n", method, urlStr)
-		log.Printf("API REQUEST  PAYLOAD :: [%s]\n", string(b))
-	}
+	s.log(LogDebug, "API REQUEST %8s :: %s\n", method, urlStr)
+	s.log(LogDebug, "API REQUEST  PAYLOAD :: [%s]\n", string(b))
 
 	req, err := http.NewRequest(method, urlStr, bytes.NewBuffer(b))
 	if err != nil {
@@ -95,10 +92,8 @@ func (s *Session) RequestWithLockedBucket(method, urlStr, contentType string, b 
 	// TODO: Make a configurable static variable.
 	req.Header.Set("User-Agent", s.UserAgent)
 
-	if s.Debug {
-		for k, v := range req.Header {
-			log.Printf("API REQUEST   HEADER :: [%s] = %+v\n", k, v)
-		}
+	for k, v := range req.Header {
+		s.log(LogDebug, "API REQUEST   HEADER :: [%s] = %+v\n", k, v)
 	}
 
 	resp, err := s.Client.Do(req)
@@ -109,7 +104,7 @@ func (s *Session) RequestWithLockedBucket(method, urlStr, contentType string, b 
 	defer func() {
 		err2 := resp.Body.Close()
 		if err2 != nil {
-			log.Println("error closing resp body")
+			s.log(LogError, "error closing resp body")
 		}
 	}()
 
@@ -123,14 +118,11 @@ func (s *Session) RequestWithLockedBucket(method, urlStr, contentType string, b 
 		return
 	}
 
-	if s.Debug {
-
-		log.Printf("API RESPONSE  STATUS :: %s\n", resp.Status)
-		for k, v := range resp.Header {
-			log.Printf("API RESPONSE  HEADER :: [%s] = %+v\n", k, v)
-		}
-		log.Printf("API RESPONSE    BODY :: [%s]\n\n\n", response)
+	s.log(LogDebug, "API RESPONSE  STATUS :: %s\n", resp.Status)
+	for k, v := range resp.Header {
+		s.log(LogDebug, "API RESPONSE  HEADER :: [%s] = %+v\n", k, v)
 	}
+	s.log(LogDebug, "API RESPONSE    BODY :: [%s]\n\n\n", response)
 
 	switch resp.StatusCode {
 	case http.StatusOK:

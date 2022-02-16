@@ -37,7 +37,6 @@ type Session struct {
 	MFA bool
 
 	// Debug for printing JSON request/responses
-	Debug    bool // Deprecated, will be removed.
 	LogLevel int
 
 	// Should the session reconnect the websocket on errors.
